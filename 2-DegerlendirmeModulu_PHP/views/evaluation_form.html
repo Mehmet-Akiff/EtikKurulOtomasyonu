@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etik Kurul Üye Değerlendirme Portalı (PHP + MySQL)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .header-banner { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 25px 0; margin-bottom: 30px; }
+        .badge-score { font-size: 1rem; padding: 6px 12px; }
+    </style>
+</head>
+<body>
+    <div class="header-banner">
+        <div class="container">
+            <h2 class="fw-bold">🏛️ Etik Kurul Üye Değerlendirme Portalı</h2>
+            <p class="mb-0 text-light opacity-75">Modül 2: Kurul Üyeleri, Otomatik Atama & Görüş Bildirimi (PHP + MySQL)</p>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card p-4 mb-4">
+                    <h5 class="fw-bold text-primary mb-3">👤 Kurul Üyesi Seçimi & Bekleyen Dosyalar</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Kurul Üyesi:</label>
+                        <select id="memberSelect" class="form-select" onchange="loadMemberAssignments()">
+                            <option value="">Üye Seçiniz...</option>
+                        </select>
+                    </div>
+                    <div id="assignmentList" class="list-group mt-3">
+                        <div class="text-muted small">Atanmış dosyaları görmek için yukarıdan üye seçiniz.</div>
+                    </div>
+                </div>
+
+                <div class="card p-4">
+                    <h5 class="fw-bold text-primary mb-3">⚡ Otomatik Dosya Atama Testi</h5>
+                    <p class="small text-muted">Modül 1'den gelen yeni başvuruları yük dengesine ve uzmanlığa göre kurul üyelerine otomatik dağıtır.</p>
+                    <div class="mb-2">
+                        <label class="form-label small">Protokol No:</label>
+                        <input type="text" id="autoProtocol" class="form-control form-control-sm" value="ETIK-2026-00001">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Proje Başlığı:</label>
+                        <input type="text" id="autoTitle" class="form-control form-control-sm" value="Klinik İlaç Deneylerinde Etik Değerlendirme">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Araştırma Alanı:</label>
+                        <select id="autoField" class="form-select form-select-sm">
+                            <option value="Tıp / Biyomedikal">Tıp / Biyomedikal</option>
+                            <option value="Klinik Psikoloji">Klinik Psikoloji</option>
+                            <option value="Sosyal Bilimler / Hukuk">Sosyal Bilimler / Hukuk</option>
+                            <option value="Eğitim Bilimleri">Eğitim Bilimleri</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-100 mt-2" onclick="triggerAutoAssign()">🤖 Otomatik Atama Yap</button>
+                    <div id="autoAssignResult" class="mt-2 small"></div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card p-4">
+                    <h5 class="fw-bold text-success mb-3">📝 Etik İnceleme & Görüş Bildirme Formu</h5>
+                    <form id="evalForm" onsubmit="submitEvaluation(event)">
+                        <input type="hidden" id="evalAssignmentId">
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small">Protokol No:</label>
+                                <input type="text" id="evalProtocol" class="form-control" readonly placeholder="Dosya seçiniz">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small">Seçili Jüri Üyesi ID:</label>
+                                <input type="text" id="evalMemberId" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mt-3">Kriter Puanlaması (1: Yetersiz, 5: Mükemmel)</h6>
+                        <div class="mb-3">
+                            <label class="form-label small">1. Araştırma Yöntemi ve Metodoloji Uygunluğu:</label>
+                            <select id="methodologyScore" class="form-select" required>
+                                <option value="5">5 - Tamamen Uygun ve Etik</option>
+                                <option value="4">4 - Genel Olarak Uygun</option>
+                                <option value="3">3 - Orta Düzeyde (Küçük Eksikler)</option>
+                                <option value="2">2 - Yetersiz / Riskli</option>
+                                <option value="1">1 - Kesinlikle Uygun Değil</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small">2. Bilgilendirilmiş Onam ve Gönüllü Hakları:</label>
+                            <select id="consentScore" class="form-select" required>
+                                <option value="5">5 - Eksiksiz ve Açık</option>
+                                <option value="4">4 - Yeterli</option>
+                                <option value="3">3 - Revizyon Gerekli</option>
+                                <option value="2">2 - Ciddi Eksiklikler Var</option>
+                                <option value="1">1 - Kabul Edilemez</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small">3. Risk ve Fayda Analizi Değerlendirmesi:</label>
+                            <select id="riskScore" class="form-select" required>
+                                <option value="5">5 - Riskler Minimize Edilmiş</option>
+                                <option value="4">4 - Risk Yönetilebilir</option>
+                                <option value="3">3 - Riskler Detaylandırılmalı</option>
+                                <option value="2">2 - Yüksek Risk</option>
+                                <option value="1">1 - Tehlikeli / Kabul Edilemez</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Üye Karar Tercihi:</label>
+                            <select id="evalDecision" class="form-select form-select-lg border-primary" required>
+                                <option value="Approved">✅ ONAY (Araştırma Etik Açıdan Uygundur)</option>
+                                <option value="RevisionNeeded">⚠️ DÜZELTME / REVİZYON İSTENİYOR</option>
+                                <option value="Rejected">❌ RET (Araştırma Etik Açıdan Uygun Değildir)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small">Detaylı Gerekçe ve Görüş Notları:</label>
+                            <textarea id="feedbackNotes" class="form-control" rows="3" required placeholder="Görüş ve önerilerinizi yazınız..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold">📨 Değerlendirmeyi Kaydet & Bildir</button>
+                    </form>
+                    <div id="evalStatus" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadMembers() {
+            try {
+                const res = await fetch('/api/members');
+                const members = await res.json();
+                const sel = document.getElementById('memberSelect');
+                sel.innerHTML = '<option value="">Üye Seçiniz...</option>';
+                members.forEach(m => {
+                    sel.innerHTML += `<option value="${m.id}">${m.title} ${m.full_name} (${m.field_of_expertise}) - [Aktif: ${m.active_file_count} dosya]</option>`;
+                });
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function loadMemberAssignments() {
+            const memberId = document.getElementById('memberSelect').value;
+            if(!memberId) return;
+            document.getElementById('evalMemberId').value = memberId;
+            const res = await fetch(`/api/assignments/member/${memberId}?status=Pending`);
+            const data = await res.json();
+            const list = document.getElementById('assignmentList');
+            list.innerHTML = '';
+            if(data.assignments.length === 0) {
+                list.innerHTML = '<div class="alert alert-info py-2 small">Bu üyeye ait bekleyen inceleme dosyası bulunmuyor.</div>';
+                return;
+            }
+            data.assignments.forEach(a => {
+                list.innerHTML += `
+                    <button type="button" class="list-group-item list-group-item-action" onclick="selectAssignment(${a.id}, '${a.protocol_number}', '${a.project_title}')">
+                        <div class="d-flex w-100 justify-content-between">
+                            <strong class="text-primary">${a.protocol_number}</strong>
+                            <small class="badge bg-warning text-dark">${a.assignment_status}</small>
+                        </div>
+                        <p class="mb-1 small">${a.project_title}</p>
+                        <small class="text-muted">Alan: ${a.field_of_study}</small>
+                    </button>
+                `;
+            });
+        }
+
+        function selectAssignment(id, protocol, title) {
+            document.getElementById('evalAssignmentId').value = id;
+            document.getElementById('evalProtocol').value = protocol;
+        }
+
+        async function triggerAutoAssign() {
+            const proto = document.getElementById('autoProtocol').value;
+            const title = document.getElementById('autoTitle').value;
+            const field = document.getElementById('autoField').value;
+            const res = await fetch('/api/assignments/auto-assign', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ protocolNumber: proto, projectTitle: title, fieldOfStudy: field, requiredReviewers: 2 })
+            });
+            const data = await res.json();
+            const out = document.getElementById('autoAssignResult');
+            if(data.status === 'success') {
+                out.innerHTML = `<div class="alert alert-success p-2">Atandı: ${data.assigned_count} üye. (${data.assignments.map(a => a.member_name).join(', ')})</div>`;
+                loadMembers();
+            } else {
+                out.innerHTML = `<div class="alert alert-warning p-2">${data.message || data.error}</div>`;
+            }
+        }
+
+        async function submitEvaluation(e) {
+            e.preventDefault();
+            const assignmentId = document.getElementById('evalAssignmentId').value;
+            if(!assignmentId) {
+                alert('Lütfen sol taraftan değerlendirilecek bir dosya seçiniz.');
+                return;
+            }
+            const payload = {
+                assignmentId: assignmentId,
+                protocolNumber: document.getElementById('evalProtocol').value,
+                memberId: document.getElementById('evalMemberId').value,
+                methodologyScore: parseInt(document.getElementById('methodologyScore').value),
+                consentFormScore: parseInt(document.getElementById('consentScore').value),
+                riskAssessmentScore: parseInt(document.getElementById('riskScore').value),
+                decision: document.getElementById('evalDecision').value,
+                feedbackNotes: document.getElementById('feedbackNotes').value
+            };
+
+            const res = await fetch('/api/evaluations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            const statusDiv = document.getElementById('evalStatus');
+            if(res.ok) {
+                statusDiv.innerHTML = '<div class="alert alert-success">Değerlendirme başarıyla sisteme iletildi. Teşekkür ederiz.</div>';
+                loadMembers();
+                loadMemberAssignments();
+            } else {
+                statusDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            }
+        }
+
+        window.onload = loadMembers;
+    </script>
+</body>
+</html>
