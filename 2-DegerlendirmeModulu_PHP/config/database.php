@@ -35,12 +35,14 @@ class Database {
             }
         }
 
-        // SQLite Fallback
-        $sqlitePath = dirname(__DIR__) . '/database/evaluation.sqlite';
+        // SQLite Fallback / Test DB (Her zaman tam yazma yetkisi olan temp dizini)
+        $sqlitePath = sys_get_temp_dir() . '/etikkurul_evaluation.sqlite';
         $pdo = new PDO("sqlite:{$sqlitePath}", null, null, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]);
+        $pdo->exec("PRAGMA journal_mode = MEMORY;");
+        $pdo->exec("PRAGMA synchronous = OFF;");
         self::$instance = $pdo;
         self::ensureTablesExist(self::$instance, 'sqlite');
         return self::$instance;

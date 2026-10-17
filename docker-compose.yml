@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # 1. Veritabanları
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: etikkurul-mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=EtikKurul_2026!Password
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  mysql:
+    image: mysql:8.0
+    container_name: etikkurul-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=etikkurul_degerlendirme
+      - MYSQL_USER=etikkurul
+      - MYSQL_PASSWORD=etikpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./2-DegerlendirmeModulu_PHP/database/schema.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mongodb:
+    image: mongo:7.0
+    container_name: etikkurul-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # 2. Servisler / Modüller
+  basvuru-service:
+    build:
+      context: ./1-BasvuruModulu_DotNet
+      dockerfile: Dockerfile
+    container_name: etikkurul-basvuru-dotnet
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=mssql,1433;Database=EtikKurulDb;User Id=sa;Password=EtikKurul_2026!Password;TrustServerCertificate=True
+      - DatabaseProvider=SqlServer
+    ports:
+      - "5001:8080"
+    depends_on:
+      - mssql
+
+  degerlendirme-service:
+    build:
+      context: ./2-DegerlendirmeModulu_PHP
+      dockerfile: Dockerfile
+    container_name: etikkurul-degerlendirme-php
+    environment:
+      - DB_DRIVER=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=etikkurul_degerlendirme
+      - DB_USER=etikkurul
+      - DB_PASS=etikpassword
+    ports:
+      - "5002:80"
+    depends_on:
+      - mysql
+
+  karar-service:
+    build:
+      context: ./3-KararVeBelgeModulu_Node
+      dockerfile: Dockerfile
+    container_name: etikkurul-karar-node
+    environment:
+      - PORT=5003
+      - MONGO_URI=mongodb://mongodb:27017/etikkurul_karar
+    ports:
+      - "5003:5003"
+    depends_on:
+      - mongodb
+
+volumes:
+  mssql_data:
+  mysql_data:
+  mongo_data:
