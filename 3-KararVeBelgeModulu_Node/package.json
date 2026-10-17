@@ -1,0 +1,16 @@
+{
+  "name": "etik-kurul-karar-belge-modulu",
+  "version": "1.0.0",
+  "description": "Modül 3: Karar, Revizyon & Otomatik Karar Belgesi Üretimi (Node.js + MongoDB)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node tests/decision.test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "qrcode": "^1.5.4"
+  }
+}
