@@ -137,3 +137,20 @@ Bu test şunları sırayla icra eder:
 1. `dotnet test` ile ASP.NET Core başvuru ve belge iş mantığını test eder.
 2. `php tests/AutoAssignmentTest.php` ile akıllı otomatik atama motorunu ve üye değerlendirmelerini test eder.
 3. `node tests/decision.test.js` ile karar kesinleştirme, QR kodlu karar belgesi üretimini ve doğrulama kodunu test eder.
+
+---
+
+## 🖥️ 4) Windows Masaüstü Uygulaması (.EXE)
+
+Microsoft Store kalitesinde, modern Windows 11 Fluent arayüzlü ve bağımsız (sıfır ön kurulum gerektiren) masaüstü sürümü:
+
+- **Konum:** `4-MasaustuUygulamasi/dist/`
+  - 📦 **Kurulumlu Sürüm (Setup):** `Etik Kurul Otomasyonu Setup 1.0.0.exe` (Masaüstü kısayolu, Başlat menüsü ve kaldırma desteği)
+  - 🚀 **Taşınabilir Sürüm (Portable):** `EtikKurulOtomasyonu-Portable.exe` (Kurulumsuz, çift tıkla her Windows bilgisayarda anında çalışır)
+
+Masaüstü uygulamasını yeniden derlemek için:
+```bash
+cd 4-MasaustuUygulamasi
+npm run build:exe
+```
+

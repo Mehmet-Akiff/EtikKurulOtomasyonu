@@ -1,0 +1,51 @@
+{
+  "name": "etik-kurul-otomasyonu",
+  "version": "1.0.0",
+  "description": "Akademik ve Bilimsel Araştırmalar Etik Kurul Otomasyonu Masaüstü Uygulaması",
+  "main": "src/main.js",
+  "author": "Mehmet Akif Ürey",
+  "scripts": {
+    "start": "electron .",
+    "test": "node tests/engine.test.js",
+    "build:exe": "electron-builder --win nsis portable"
+  },
+  "build": {
+    "appId": "com.etikkurul.otomasyon",
+    "productName": "Etik Kurul Otomasyonu",
+    "copyright": "Copyright © 2026 Mehmet Akif Ürey",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Etik Kurul Otomasyonu"
+    },
+    "portable": {
+      "artifactName": "EtikKurulOtomasyonu-Portable.exe"
+    }
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}

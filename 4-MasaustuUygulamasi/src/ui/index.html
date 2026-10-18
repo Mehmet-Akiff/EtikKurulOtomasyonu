@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etik Kurul Otomasyonu</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sol Gezinme Çubuğu (Sidebar) -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-box">
+          <i class="fa-solid fa-scale-balanced logo-icon"></i>
+        </div>
+        <div class="logo-text">
+          <h2>ETİK KURUL</h2>
+          <span>Otomasyon Sistemi</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="tab-dashboard">
+          <i class="fa-solid fa-gauge-high"></i>
+          <span>Genel Bakış</span>
+        </button>
+        <button class="nav-item" data-tab="tab-application">
+          <i class="fa-solid fa-file-circle-plus"></i>
+          <span>Yeni Başvuru</span>
+        </button>
+        <button class="nav-item" data-tab="tab-assignment">
+          <i class="fa-solid fa-robot"></i>
+          <span>Otomatik Atama</span>
+        </button>
+        <button class="nav-item" data-tab="tab-evaluation">
+          <i class="fa-solid fa-clipboard-check"></i>
+          <span>Üye Değerlendirme</span>
+        </button>
+        <button class="nav-item" data-tab="tab-decision">
+          <i class="fa-solid fa-stamp"></i>
+          <span>Karar & Belgeler</span>
+        </button>
+        <button class="nav-item" data-tab="tab-verify">
+          <i class="fa-solid fa-qrcode"></i>
+          <span>Belge Doğrulama</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-indicator">
+          <span class="status-dot"></span>
+          <span>Sistem Aktif (Yerel Motor)</span>
+        </div>
+        <div class="version-label">v1.0.0 Desktop Edition</div>
+      </div>
+    </aside>
+
+    <!-- Ana İçerik Alanı -->
+    <main class="main-content">
+      <!-- 1. DASHBOARD SEKMESİ -->
+      <section id="tab-dashboard" class="content-tab active">
+        <header class="tab-header">
+          <h1>Sistem Genel Bakış</h1>
+          <p>Etik kurul başvuruları, inceleme durumları ve kurul kararları özeti.</p>
+        </header>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon bg-blue"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statTotalApps">0</span>
+              <span class="stat-label">Toplam Başvuru</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-yellow"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statUnderReview">0</span>
+              <span class="stat-label">İncelemede / Atanmış</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-green"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statApproved">0</span>
+              <span class="stat-label">Onaylanan Kararlar</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon bg-purple"><i class="fa-solid fa-users"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statMembers">6</span>
+              <span class="stat-label">Aktif Kurul Üyesi</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card table-card mt-4">
+          <div class="card-header-flex">
+            <h3>Son Başvurular</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadDashboard()"><i class="fa-solid fa-rotate"></i> Yenile</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Protokol No</th>
+                  <th>Proje Başlığı</th>
+                  <th>Araştırmacı</th>
+                  <th>Alan</th>
+                  <th>Durum</th>
+                  <th>Tarih</th>
+                </tr>
+              </thead>
+              <tbody id="dashboardTableBody">
+                <!-- Dinamik doldurulacak -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. YENİ BAŞVURU SEKMESİ -->
+      <section id="tab-application" class="content-tab">
+        <header class="tab-header">
+          <h1>Yeni Etik Kurul Başvurusu</h1>
+          <p>Akademik araştırma, tez veya projeler için dijital başvuru formu ve evrak iletimi.</p>
+        </header>
+
+        <div class="card form-card">
+          <form id="newApplicationForm" onsubmit="handleCreateApplication(event)">
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label>Sorumlu Araştırmacı:</label>
+                <select id="appResearcherSelect" class="form-control" required>
+                  <option value="">Araştırmacı Seçiniz...</option>
+                </select>
+              </div>
+              <div class="form-group col-6">
+                <label>Araştırma Türü:</label>
+                <select id="appResearchType" class="form-control" required>
+                  <option value="Akademik Araştırma">Akademik Araştırma</option>
+                  <option value="Yüksek Lisans / Doktora Tezi">Yüksek Lisans / Doktora Tezi</option>
+                  <option value="Kurumsal / TÜBİTAK Projesi">Kurumsal / TÜBİTAK Projesi</option>
+                  <option value="Klinik Dışı Sağlık Araştırması">Klinik Dışı Sağlık Araştırması</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Proje / Araştırma Başlığı:</label>
+              <input type="text" id="appProjectTitle" class="form-control" placeholder="Örn: Yapay Zeka Tabanlı Teşhis Sistemlerinin Etik Değerlendirmesi" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-6">
+                <label>Araştırma Alanı (Uzmanlık Eşleşmesi İçin):</label>
+                <select id="appFieldOfStudy" class="form-control" required>
+                  <option value="Tıp / Biyomedikal">Tıp / Biyomedikal</option>
+                  <option value="Klinik Psikoloji">Klinik Psikoloji</option>
+                  <option value="Sosyal Bilimler / Hukuk">Sosyal Bilimler / Hukuk</option>
+                  <option value="Eğitim Bilimleri">Eğitim Bilimleri</option>
+                  <option value="Biyomedikal / Genetik">Biyomedikal / Genetik</option>
+                </select>
+              </div>
+              <div class="form-group col-3">
+                <label>Gönüllü / Katılımcı Sayısı:</label>
+                <input type="number" id="appVolunteerCount" class="form-control" value="60" min="0" required>
+              </div>
+              <div class="form-group col-3">
+                <label>Risk Seviyesi:</label>
+                <select id="appRiskLevel" class="form-control">
+                  <option value="Düşük">Düşük Risk</option>
+                  <option value="Orta">Orta Risk</option>
+                  <option value="Yüksek">Yüksek Risk</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Araştırma Özeti ve Amacı:</label>
+              <textarea id="appAbstract" class="form-control" rows="3" placeholder="Araştırmanın konusu, amacı ve etik açıdan dikkat edilen hususları özetleyiniz..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Metodoloji ve Veri Toplama Yöntemi:</label>
+              <textarea id="appMethodology" class="form-control" rows="2" placeholder="Anket, mülakat, test protokolleri, veri saklama koşulları..." required></textarea>
+            </div>
+
+            <div class="attached-files-box">
+              <div class="attached-title"><i class="fa-solid fa-paperclip"></i> Otomatik Eklenen Dijital Belgeler:</div>
+              <div class="badge-tag"><i class="fa-solid fa-file-pdf"></i> Araştırma Protokolü.pdf</div>
+              <div class="badge-tag"><i class="fa-solid fa-file-pdf"></i> Bilgilendirilmiş Onam Formu.pdf</div>
+              <div class="badge-tag"><i class="fa-solid fa-file-pdf"></i> Veri Toplama Ölçeği.pdf</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg mt-3"><i class="fa-solid fa-paper-plane"></i> Başvuruyu Etik Kurula Gönder</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 3. OTOMATİK ATAMA SEKMESİ -->
+      <section id="tab-assignment" class="content-tab">
+        <header class="tab-header">
+          <h1>Kurul Üyelerine Otomatik Dosya Dağıtımı</h1>
+          <p>Yük dengesi ve uzmanlık alanına göre başvuruları kurul raportörlerine otomatik atar.</p>
+        </header>
+
+        <div class="grid-2col">
+          <div class="card">
+            <h3><i class="fa-solid fa-list-check"></i> Atama Bekleyen Dosyalar</h3>
+            <div id="unassignedList" class="compact-list mt-3">
+              <!-- Dinamik yüklenecek -->
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><i class="fa-solid fa-users-gear"></i> Aktif Kurul Raportörleri</h3>
+            <div id="membersLoadList" class="compact-list mt-3">
+              <!-- Dinamik yüklenecek -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ÜYE DEĞERLENDİRME SEKMESİ -->
+      <section id="tab-evaluation" class="content-tab">
+        <header class="tab-header">
+          <h1>Kurul Üye Değerlendirme & Puanlama</h1>
+          <p>Raportörlerin görüş, 1-5 kriter puanı ve karar bildirimini kaydeder.</p>
+        </header>
+
+        <div class="card form-card">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label>Değerlendirilecek Dosya / Atama:</label>
+              <select id="evalAssignmentSelect" class="form-control" onchange="handleAssignmentSelectChange()">
+                <option value="">Bekleyen Atama Seçiniz...</option>
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label>Dosya Başlığı / Alan:</label>
+              <input type="text" id="evalProjectTitle" class="form-control" readonly placeholder="Dosya seçildiğinde otomatik gelir">
+            </div>
+          </div>
+
+          <form id="evaluationForm" onsubmit="handleEvaluationSubmit(event)">
+            <div class="criteria-box mt-3">
+              <h4>Etik Değerlendirme Kriterleri (1: Yetersiz / Riskli, 5: Eksiksiz / Mükemmel)</h4>
+              
+              <div class="criteria-item">
+                <div class="criteria-text">
+                  <strong>1. Araştırma Yöntemi ve Metodoloji Uygunluğu:</strong>
+                  <span>Gönüllü güvenliği, yöntem doğruluğu, bilimsel etik ilkeler.</span>
+                </div>
+                <select id="scoreMethodology" class="form-control form-control-sm" required>
+                  <option value="5">5 - Mükemmel ve Tam Uyumlu</option>
+                  <option value="4">4 - İyi / Kabul Edilebilir</option>
+                  <option value="3">3 - Orta (Küçük Düzeltmeler Gerekebilir)</option>
+                  <option value="2">2 - Yetersiz</option>
+                  <option value="1">1 - Kesinlikle Kabul Edilemez</option>
+                </select>
+              </div>
+
+              <div class="criteria-item">
+                <div class="criteria-text">
+                  <strong>2. Bilgilendirilmiş Onam ve Gönüllü Hakları:</strong>
+                  <span>Katılımcı onam formu açıklığı, aydınlatma metni yeterliliği.</span>
+                </div>
+                <select id="scoreConsent" class="form-control form-control-sm" required>
+                  <option value="5">5 - Eksiksiz ve Şeffaf</option>
+                  <option value="4">4 - Yeterli</option>
+                  <option value="3">3 - Revizyon İstenmeli</option>
+                  <option value="2">2 - Yetersiz</option>
+                  <option value="1">1 - Etik Dışı</option>
+                </select>
+              </div>
+
+              <div class="criteria-item">
+                <div class="criteria-text">
+                  <strong>3. Risk ve Fayda Analizi Değerlendirmesi:</strong>
+                  <span>Katılımcı risklerinin minimize edilmesi ve fayda dengesi.</span>
+                </div>
+                <select id="scoreRisk" class="form-control form-control-sm" required>
+                  <option value="5">5 - Riskler Minimize Edilmiş</option>
+                  <option value="4">4 - Yönetilebilir Risk</option>
+                  <option value="3">3 - Riskler Açıklanmalı</option>
+                  <option value="2">2 - Yüksek Risk</option>
+                  <option value="1">1 - Kabul Edilemez Risk</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row mt-3">
+              <div class="form-group col-6">
+                <label><strong>Üye Karar Tercihi:</strong></label>
+                <select id="evalDecisionChoice" class="form-control form-control-lg border-primary" required>
+                  <option value="Approved">✅ ONAY (Araştırma Etik Açıdan Uygundur)</option>
+                  <option value="RevisionNeeded">⚠️ DÜZELTME / REVİZYON İSTENİYOR</option>
+                  <option value="Rejected">❌ RET (Etik Açıdan Uygun Değildir)</option>
+                </select>
+              </div>
+              <div class="form-group col-6">
+                <label>Detaylı Kurul Görüş ve Gerekçe Notu:</label>
+                <textarea id="evalFeedbackNotes" class="form-control" rows="3" placeholder="Gerekçenizi ve varsa düzeltme taleplerinizi yazınız..." required></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg mt-3"><i class="fa-solid fa-check-double"></i> Değerlendirmeyi Bildir ve Kaydet</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 5. KARAR & BELGELER SEKMESİ -->
+      <section id="tab-decision" class="content-tab">
+        <header class="tab-header">
+          <h1>Nihai Kurul Kararları & Resmi Karar Belgeleri</h1>
+          <p>Tüm değerlendirmeleri harmanlar ve QR kodlu resmi onay/ret belgelerini üretir.</p>
+        </header>
+
+        <div class="card">
+          <div class="card-header-flex">
+            <h3>Karara Bağlanan Başvurular</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadDecisions()"><i class="fa-solid fa-rotate"></i> Yenile</button>
+          </div>
+          <div class="table-responsive mt-3">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Karar No</th>
+                  <th>Protokol No</th>
+                  <th>Proje Başlığı</th>
+                  <th>Araştırmacı</th>
+                  <th>Sonuç</th>
+                  <th>Etik Puanı</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody id="decisionsTableBody">
+                <!-- Dinamik doldurulacak -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. DOĞRULAMA SEKMESİ -->
+      <section id="tab-verify" class="content-tab">
+        <header class="tab-header">
+          <h1>Resmi Karar Belgesi Doğrulama</h1>
+          <p>Karekod (QR) veya 24 haneli dijital doğrulama kodu ile belgenin gerçekliğini sorgulayınız.</p>
+        </header>
+
+        <div class="card" style="max-width: 650px; margin: 0 auto;">
+          <div class="form-group">
+            <label>Belge Üzerindeki Doğrulama Kodu:</label>
+            <div class="input-group-flex">
+              <input type="text" id="verifyCodeInput" class="form-control" placeholder="Örn: 2902BF5B07550893F317F7A7" style="text-transform: uppercase;">
+              <button class="btn btn-primary" onclick="handleVerifyDocument()"><i class="fa-solid fa-magnifying-glass"></i> Belgeyi Sorgula</button>
+            </div>
+          </div>
+          <div id="verifyResultBox" class="mt-3"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="app.js"></script>
+</body>
+</html>
