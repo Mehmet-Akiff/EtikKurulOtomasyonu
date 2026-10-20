@@ -3,6 +3,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
+  // State Sync
+  reconcileState: () => ipcRenderer.invoke('reconcile-state'),
+
   // Researchers
   getResearchers: () => ipcRenderer.invoke('get-researchers'),
   createResearcher: (data) => ipcRenderer.invoke('create-researcher', data),
@@ -19,10 +22,12 @@ contextBridge.exposeInMainWorld('api', {
 
   // Evaluation
   submitEvaluation: (data) => ipcRenderer.invoke('submit-evaluation', data),
+  getEvaluations: (protocol) => ipcRenderer.invoke('get-evaluations', protocol),
   getEvaluationSummary: (protocol) => ipcRenderer.invoke('get-evaluation-summary', protocol),
 
   // Decisions & Certificates
   finalizeDecision: (data) => ipcRenderer.invoke('finalize-decision', data),
+  getDecisions: () => ipcRenderer.invoke('get-decisions'),
   getDecision: (protocol) => ipcRenderer.invoke('get-decision', protocol),
   verifyCertificate: (code) => ipcRenderer.invoke('verify-certificate', code),
   openCertificateWindow: (protocol) => ipcRenderer.invoke('open-certificate-window', protocol),

@@ -53,7 +53,7 @@
           <span class="status-dot"></span>
           <span>Sistem Aktif (Yerel Motor)</span>
         </div>
-        <div class="version-label">v1.0.0 Desktop Edition</div>
+        <div class="version-label">v1.1.0 Desktop Edition</div>
       </div>
     </aside>
 
@@ -78,7 +78,7 @@
             <div class="stat-icon bg-yellow"><i class="fa-solid fa-hourglass-half"></i></div>
             <div class="stat-info">
               <span class="stat-value" id="statUnderReview">0</span>
-              <span class="stat-label">İncelemede / Atanmış</span>
+              <span class="stat-label">İncelemede / Bekleyen</span>
             </div>
           </div>
           <div class="stat-card">
@@ -99,10 +99,10 @@
 
         <div class="card table-card mt-4">
           <div class="card-header-flex">
-            <h3>Son Başvurular</h3>
+            <h3>Tüm Başvurular ve Süreç Takibi</h3>
             <button class="btn btn-secondary btn-sm" onclick="loadDashboard()"><i class="fa-solid fa-rotate"></i> Yenile</button>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive mt-3">
             <table class="data-table">
               <thead>
                 <tr>
@@ -112,6 +112,7 @@
                   <th>Alan</th>
                   <th>Durum</th>
                   <th>Tarih</th>
+                  <th>Hızlı İşlem</th>
                 </tr>
               </thead>
               <tbody id="dashboardTableBody">
@@ -133,7 +134,12 @@
           <form id="newApplicationForm" onsubmit="handleCreateApplication(event)">
             <div class="form-row">
               <div class="form-group col-6">
-                <label>Sorumlu Araştırmacı:</label>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                  <label style="margin-bottom:0;">Sorumlu Araştırmacı:</label>
+                  <button type="button" class="btn btn-secondary btn-xs" onclick="toggleNewResearcherBox()">
+                    <i class="fa-solid fa-user-plus"></i> Yeni Araştırmacı Ekle
+                  </button>
+                </div>
                 <select id="appResearcherSelect" class="form-control" required>
                   <option value="">Araştırmacı Seçiniz...</option>
                 </select>
@@ -147,6 +153,30 @@
                   <option value="Klinik Dışı Sağlık Araştırması">Klinik Dışı Sağlık Araştırması</option>
                 </select>
               </div>
+            </div>
+
+            <!-- Hızlı Araştırmacı Ekleme Kutusu -->
+            <div id="newResearcherBox" style="display:none; background:#f0f9ff; border:1px solid #bae6fd; padding:14px; border-radius:8px; margin-bottom:16px;">
+              <div style="font-size:12.5px; font-weight:600; color:#0369a1; margin-bottom:10px;">
+                <i class="fa-solid fa-user-graduate"></i> Yeni Sorumlu Araştırmacı Kaydı
+              </div>
+              <div class="form-row">
+                <div class="form-group col-3" style="margin-bottom:8px;">
+                  <input type="text" id="newResTitle" class="form-control" placeholder="Ünvan (Örn: Doç. Dr.)">
+                </div>
+                <div class="form-group col-3" style="margin-bottom:8px;">
+                  <input type="text" id="newResName" class="form-control" placeholder="Ad Soyad">
+                </div>
+                <div class="form-group col-3" style="margin-bottom:8px;">
+                  <input type="email" id="newResEmail" class="form-control" placeholder="E-Posta Adresi">
+                </div>
+                <div class="form-group col-3" style="margin-bottom:8px;">
+                  <input type="text" id="newResDept" class="form-control" placeholder="Bölüm / Kurum">
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="handleCreateResearcher()">
+                <i class="fa-solid fa-check"></i> Araştırmacıyı Kaydet ve Seç
+              </button>
             </div>
 
             <div class="form-group">
@@ -163,6 +193,7 @@
                   <option value="Sosyal Bilimler / Hukuk">Sosyal Bilimler / Hukuk</option>
                   <option value="Eğitim Bilimleri">Eğitim Bilimleri</option>
                   <option value="Biyomedikal / Genetik">Biyomedikal / Genetik</option>
+                  <option value="Mühendislik / Yapay Zeka ve Bilişim">Mühendislik / Yapay Zeka ve Bilişim</option>
                 </select>
               </div>
               <div class="form-group col-3">
@@ -223,13 +254,36 @@
             </div>
           </div>
         </div>
+
+        <div class="card mt-4">
+          <div class="card-header-flex">
+            <h3><i class="fa-solid fa-user-check"></i> Atanmış Dosyalar ve Raportör İnceleme Durumu</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadUnassignedList(); loadMembersLoadList();"><i class="fa-solid fa-rotate"></i> Yenile</button>
+          </div>
+          <div class="table-responsive mt-3">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Protokol No</th>
+                  <th>Proje Başlığı</th>
+                  <th>Atanan Raportörler</th>
+                  <th>İnceleme Durumu</th>
+                  <th>İşlem</th>
+                </tr>
+              </thead>
+              <tbody id="assignedFilesTableBody">
+                <!-- Dinamik doldurulacak -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- 4. ÜYE DEĞERLENDİRME SEKMESİ -->
       <section id="tab-evaluation" class="content-tab">
         <header class="tab-header">
           <h1>Kurul Üye Değerlendirme & Puanlama</h1>
-          <p>Raportörlerin görüş, 1-5 kriter puanı ve karar bildirimini kaydeder.</p>
+          <p>Raportörlerin görüş, 1-5 kriter puanı ve karar bildirimini kaydeder ve otomatik kurul kararına dönüştürür.</p>
         </header>
 
         <div class="card form-card">
@@ -255,7 +309,7 @@
                   <strong>1. Araştırma Yöntemi ve Metodoloji Uygunluğu:</strong>
                   <span>Gönüllü güvenliği, yöntem doğruluğu, bilimsel etik ilkeler.</span>
                 </div>
-                <select id="scoreMethodology" class="form-control form-control-sm" required>
+                <select id="scoreMethodology" class="form-control form-control-sm" style="width: 260px;" required>
                   <option value="5">5 - Mükemmel ve Tam Uyumlu</option>
                   <option value="4">4 - İyi / Kabul Edilebilir</option>
                   <option value="3">3 - Orta (Küçük Düzeltmeler Gerekebilir)</option>
@@ -269,7 +323,7 @@
                   <strong>2. Bilgilendirilmiş Onam ve Gönüllü Hakları:</strong>
                   <span>Katılımcı onam formu açıklığı, aydınlatma metni yeterliliği.</span>
                 </div>
-                <select id="scoreConsent" class="form-control form-control-sm" required>
+                <select id="scoreConsent" class="form-control form-control-sm" style="width: 260px;" required>
                   <option value="5">5 - Eksiksiz ve Şeffaf</option>
                   <option value="4">4 - Yeterli</option>
                   <option value="3">3 - Revizyon İstenmeli</option>
@@ -283,7 +337,7 @@
                   <strong>3. Risk ve Fayda Analizi Değerlendirmesi:</strong>
                   <span>Katılımcı risklerinin minimize edilmesi ve fayda dengesi.</span>
                 </div>
-                <select id="scoreRisk" class="form-control form-control-sm" required>
+                <select id="scoreRisk" class="form-control form-control-sm" style="width: 260px;" required>
                   <option value="5">5 - Riskler Minimize Edilmiş</option>
                   <option value="4">4 - Yönetilebilir Risk</option>
                   <option value="3">3 - Riskler Açıklanmalı</option>
@@ -308,8 +362,33 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-success btn-lg mt-3"><i class="fa-solid fa-check-double"></i> Değerlendirmeyi Bildir ve Kaydet</button>
+            <button type="submit" class="btn btn-success btn-lg mt-3"><i class="fa-solid fa-check-double"></i> Değerlendirmeyi Kaydet ve Karara İşle</button>
           </form>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header-flex">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Tamamlanan Üye Değerlendirmeleri</h3>
+            <button class="btn btn-secondary btn-sm" onclick="loadAssignmentsForEval()"><i class="fa-solid fa-rotate"></i> Yenile</button>
+          </div>
+          <div class="table-responsive mt-3">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Protokol No</th>
+                  <th>Kurul Üyesi</th>
+                  <th>Puanlar (M / O / R)</th>
+                  <th>Ortalama</th>
+                  <th>Üye Kararı</th>
+                  <th>Görüş Notu</th>
+                  <th>Tarih</th>
+                </tr>
+              </thead>
+              <tbody id="completedEvaluationsTableBody">
+                <!-- Dinamik doldurulacak -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -317,12 +396,12 @@
       <section id="tab-decision" class="content-tab">
         <header class="tab-header">
           <h1>Nihai Kurul Kararları & Resmi Karar Belgeleri</h1>
-          <p>Tüm değerlendirmeleri harmanlar ve QR kodlu resmi onay/ret belgelerini üretir.</p>
+          <p>Onay, revizyon ve ret kararlarını listeler; QR kodlu resmi karar belgelerini görüntüler.</p>
         </header>
 
         <div class="card">
           <div class="card-header-flex">
-            <h3>Karara Bağlanan Başvurular</h3>
+            <h3><i class="fa-solid fa-certificate"></i> Karara Bağlanan Başvurular (Onay / Revizyon / Ret)</h3>
             <button class="btn btn-secondary btn-sm" onclick="loadDecisions()"><i class="fa-solid fa-rotate"></i> Yenile</button>
           </div>
           <div class="table-responsive mt-3">
@@ -333,12 +412,39 @@
                   <th>Protokol No</th>
                   <th>Proje Başlığı</th>
                   <th>Araştırmacı</th>
-                  <th>Sonuç</th>
+                  <th>Kurul Kararı</th>
                   <th>Etik Puanı</th>
+                  <th>Doğrulama Kodu</th>
                   <th>İşlemler</th>
                 </tr>
               </thead>
               <tbody id="decisionsTableBody">
+                <!-- Dinamik doldurulacak -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header-flex">
+            <h3><i class="fa-solid fa-gavel"></i> Karar Bekleyen Başvurular (Hızlı Kurul Başkanlığı Kararı)</h3>
+          </div>
+          <p style="font-size: 12px; color: #64748b; margin-top: 4px;">
+            Raportör incelemesi devam eden veya henüz karara bağlanmamış başvurular için doğrudan kurul kararı oluşturabilirsiniz.
+          </p>
+          <div class="table-responsive mt-3">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Protokol No</th>
+                  <th>Proje Başlığı</th>
+                  <th>Araştırmacı</th>
+                  <th>Mevcut Durum</th>
+                  <th>Raportör Oyları</th>
+                  <th>Doğrudan Karar Ver</th>
+                </tr>
+              </thead>
+              <tbody id="pendingDecisionsTableBody">
                 <!-- Dinamik doldurulacak -->
               </tbody>
             </table>
@@ -353,7 +459,7 @@
           <p>Karekod (QR) veya 24 haneli dijital doğrulama kodu ile belgenin gerçekliğini sorgulayınız.</p>
         </header>
 
-        <div class="card" style="max-width: 650px; margin: 0 auto;">
+        <div class="card" style="max-width: 720px; margin: 0 auto;">
           <div class="form-group">
             <label>Belge Üzerindeki Doğrulama Kodu:</label>
             <div class="input-group-flex">
@@ -361,6 +467,8 @@
               <button class="btn btn-primary" onclick="handleVerifyDocument()"><i class="fa-solid fa-magnifying-glass"></i> Belgeyi Sorgula</button>
             </div>
           </div>
+
+          <div id="quickVerifyCodesBox" class="mt-3"></div>
           <div id="verifyResultBox" class="mt-3"></div>
         </div>
       </section>

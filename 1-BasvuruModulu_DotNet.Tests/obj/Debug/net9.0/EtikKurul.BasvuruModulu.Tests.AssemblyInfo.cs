@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EtikKurul.BasvuruModulu.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b21b3e66f3e0cfec3ac2f57c3fce8d866e7fefa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40c2ada01c0f3ab02af5255cec8076eae6bcf710")]
 [assembly: System.Reflection.AssemblyProductAttribute("EtikKurul.BasvuruModulu.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EtikKurul.BasvuruModulu.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

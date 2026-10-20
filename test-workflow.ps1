@@ -48,6 +48,17 @@ if ($LASTEXITCODE -eq 0) {
     $allPassed = $false
 }
 
+# ADIM 4: MODÜL 4 (Masaüstü Uygulaması Gömülü Motoru) BİRİM TESTLERİ
+Write-Host "`n[AŞAMA 4] Modül 4 (Masaüstü Uygulaması İş Akışı & Karar Senkronizasyonu) Test Ediliyor..." -ForegroundColor Green
+$desktopTest = & node "$baseDir\4-MasaustuUygulamasi\tests\engine.test.js"
+Write-Host $desktopTest
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✅ Modül 4 Başarılı: Masaüstü uçtan uca başvuru, atama, değerlendirme ve karar senkronizasyon testleri geçti." -ForegroundColor Green
+} else {
+    Write-Host "❌ Modül 4 Test Başarısız!" -ForegroundColor Red
+    $allPassed = $false
+}
+
 Write-Host "`n======================================================================" -ForegroundColor Cyan
 if ($allPassed) {
     Write-Host "🎉 TÜM MODÜLLER VE İŞLEVSEL GEREKSİNİMLER %100 BAŞARIYLA DOĞRULANDI!" -ForegroundColor Green

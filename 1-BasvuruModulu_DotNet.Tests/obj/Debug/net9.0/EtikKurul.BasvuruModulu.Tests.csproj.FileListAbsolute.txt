@@ -182,3 +182,4 @@ C:\Users\PC\Desktop\Antigravity Projects\EtikKurulOtomasyonu\1-BasvuruModulu_Dot
 C:\Users\PC\Desktop\Antigravity Projects\EtikKurulOtomasyonu\1-BasvuruModulu_DotNet.Tests\obj\Debug\net9.0\EtikKurul.BasvuruModulu.Tests.pdb
 C:\Users\PC\Desktop\Antigravity Projects\EtikKurulOtomasyonu\1-BasvuruModulu_DotNet.Tests\obj\Debug\net9.0\EtikKurul.BasvuruModulu.Tests.genruntimeconfig.cache
 C:\Users\PC\Desktop\Antigravity Projects\EtikKurulOtomasyonu\1-BasvuruModulu_DotNet.Tests\obj\Debug\net9.0\ref\EtikKurul.BasvuruModulu.Tests.dll
+C:\Users\PC\Desktop\Antigravity Projects\EtikKurulOtomasyonu\1-BasvuruModulu_DotNet.Tests\obj\Debug\net9.0\EtikKurul.BasvuruModulu.Tests.sourcelink.json

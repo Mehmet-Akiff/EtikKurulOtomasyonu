@@ -38,7 +38,11 @@ class DecisionService {
       researcherEmail,
       fieldOfStudy,
       finalDecision,
-      summaryRationale: summaryRationale || (finalDecision === 'Approved' ? 'Araştırma önerisi etik kurul yönergelerine uygun bulunmuştur.' : 'Araştırma önerisi etik kurul yönergelerine uygun bulunmamıştır.'),
+      summaryRationale: summaryRationale || (finalDecision === 'Approved'
+        ? 'Araştırma önerisi etik kurul yönergelerine uygun bulunmuştur.'
+        : finalDecision === 'RevisionNeeded'
+          ? 'Araştırma önerisinde belirtilen hususların revize edilerek yeniden değerlendirilmesine karar verilmiştir.'
+          : 'Araştırma önerisi etik kurul yönergelerine uygun bulunmamıştır.'),
       conditions,
       averageScore,
       decidedAt: new Date(),

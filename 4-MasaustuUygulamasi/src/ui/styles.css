@@ -327,8 +327,44 @@ body {
 .btn-success { background: var(--accent-green); color: white; }
 .btn-success:hover { background: #0c6434; }
 
+.btn-warning { background: #d97706; color: white; }
+.btn-warning:hover { background: #b45309; }
+
+.btn-danger { background: var(--accent-red); color: white; }
+.btn-danger:hover { background: #a80000; }
+
 .btn-lg { padding: 11px 22px; font-size: 14px; }
 .btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-xs { padding: 4px 8px; font-size: 11px; }
+
+.action-group {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.code-pill {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: all;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.code-pill:hover {
+  background: #e2e8f0;
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
 
 /* Tablolar */
 .table-responsive {

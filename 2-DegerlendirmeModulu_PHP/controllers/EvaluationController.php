@@ -87,7 +87,7 @@ class EvaluationController {
 
         // Karar tavsiyesi belirleme
         $consensusRecommendation = 'PendingReviews';
-        if ($completedEvaluations >= $totalAssigned && $totalAssigned > 0) {
+        if ($completedEvaluations > 0) {
             if ($votes['Rejected'] > 0) {
                 $consensusRecommendation = 'Rejected';
             } elseif ($votes['RevisionNeeded'] > 0) {
