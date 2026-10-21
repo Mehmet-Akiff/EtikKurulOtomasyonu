@@ -159,7 +159,7 @@ async function loadResearchers(selectedId) {
     researchers.forEach(r => {
       const opt = document.createElement('option');
       opt.value = String(r.id);
-      opt.textContent = `${r.title ? r.title + ' ' : ''}${r.fullName} (${r.department || 'Genel'} - ${r.institution || 'Üniversite'})`;
+      opt.textContent = `${formatPersonName(r.title, r.fullName)} (${r.department || 'Genel'} - ${r.institution || 'Üniversite'})`;
       if (String(currentVal) === String(r.id)) {
         opt.selected = true;
       }
@@ -295,7 +295,7 @@ async function loadUnassignedList() {
               const icon = x.status === 'Completed'
                 ? '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>'
                 : '<i class="fa-solid fa-clock" style="color:#d97706;"></i>';
-              return `<span class="badge-tag">${icon} ${escapeHtml(x.memberTitle)} ${escapeHtml(x.memberName)}</span>`;
+              return `<span class="badge-tag">${icon} ${escapeHtml(formatPersonName(x.memberTitle, x.memberName))}</span>`;
             })
             .join(' ');
 
@@ -336,7 +336,7 @@ async function loadMembersLoadList() {
       item.className = 'list-item-card';
       item.innerHTML = `
         <div>
-          <div style="font-weight: 600;">${escapeHtml(m.title)} ${escapeHtml(m.fullName)}</div>
+          <div style="font-weight: 600;">${escapeHtml(formatPersonName(m.title, m.fullName))}</div>
           <div style="font-size: 11.5px; color: #64748b;">${escapeHtml(m.fieldOfExpertise)}</div>
         </div>
         <div>
@@ -385,7 +385,7 @@ async function loadAssignmentsForEval(preselectProtocol) {
       opt.setAttribute('data-member', String(a.memberId));
       opt.setAttribute('data-title', `${a.projectTitle} [${a.fieldOfStudy}]`);
       const shortTitle = a.projectTitle.length > 40 ? a.projectTitle.substring(0, 40) + '...' : a.projectTitle;
-      opt.textContent = `${a.protocolNumber} — ${a.memberTitle} ${a.memberName} (${shortTitle})`;
+      opt.textContent = `${a.protocolNumber} — ${formatPersonName(a.memberTitle, a.memberName)} (${shortTitle})`;
       sel.appendChild(opt);
 
       if (preselectProtocol && a.protocolNumber === preselectProtocol && selectedIndexToPick === 0) {
@@ -419,7 +419,7 @@ async function loadAssignmentsForEval(preselectProtocol) {
 
           tr.innerHTML = `
             <td><strong>${escapeHtml(ev.protocolNumber)}</strong></td>
-            <td>${escapeHtml(ev.memberTitle || '')} ${escapeHtml(ev.memberName)}</td>
+            <td>${escapeHtml(formatPersonName(ev.memberTitle, ev.memberName))}</td>
             <td>${ev.methodologyScore} / ${ev.consentFormScore} / ${ev.riskAssessmentScore}</td>
             <td><strong>${avg} / 5.0</strong></td>
             <td><span class="status-badge ${badgeClass}">${formatStatus(ev.decision)}</span></td>
@@ -729,6 +729,15 @@ async function handleVerifyDocument() {
 }
 
 // Yardımcı Fonksiyonlar
+function formatPersonName(title, fullName) {
+  if (!fullName) return '';
+  if (!title) return fullName;
+  if (fullName.toLocaleLowerCase('tr-TR').startsWith(title.toLocaleLowerCase('tr-TR'))) {
+    return fullName;
+  }
+  return `${title} ${fullName}`;
+}
+
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
   return String(str)
