@@ -1,8 +1,8 @@
 # .gitignore for EtikKurulOtomasyonu
 
 # .NET
-bin/
-obj/
+**/bin/
+**/obj/
 *.db
 *.sqlite
 uploads/
